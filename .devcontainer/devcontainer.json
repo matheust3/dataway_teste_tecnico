@@ -1,0 +1,22 @@
+{
+    "name": "dev_neocortex",
+    "service": "dev_neocortex",
+    "dockerComposeFile": "./docker-compose.yml",
+    "settings": {},
+    "extensions": [
+        "dotjoshjohnson.xml",
+        "redhat.vscode-yaml",
+        "visualstudioexptteam.vscodeintellicode",
+        "albert.tabout",
+        "esbenp.prettier-vscode",
+        "svelte.svelte-vscode",
+        "eamodio.gitlens",
+        "dbaeumer.vscode-eslint",
+        "ms-azuretools.vscode-docker",
+        "streetsidesoftware.code-spell-checker",
+        "streetsidesoftware.code-spell-checker-portuguese-brazilian",
+        "Prisma.prisma"
+    ],
+    "workspaceFolder": "/home/developer/workspace",
+    "postStartCommand": "npm install -g npm && npm i && npx husky install"
+}

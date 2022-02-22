@@ -1,0 +1,17 @@
+{
+    "extends": [
+        "standard-with-typescript"
+    ],
+    "ignorePatterns": [
+        "dist/**/**",
+        "coverage/**/**"
+    ],
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+        "project": ".eslint-tsconfig.json"
+    },
+    "plugins": [
+        "@typescript-eslint"
+    ],
+    "rules": {}
+}

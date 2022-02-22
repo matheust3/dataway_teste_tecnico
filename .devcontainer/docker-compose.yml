@@ -1,0 +1,27 @@
+version: "3.5"
+services:
+  dev_neocortex:
+    # environment:
+    #   - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+    # ports:
+    #   - '${SERVER_PORT}:${SERVER_PORT}'
+    #   - '1000:1000'
+    privileged: true
+    user: developer
+    container_name: neocortex_dev_container
+    image: phans2_dev_container
+    build:
+      context: ..
+      dockerfile: ./.devcontainer/Dockerfile
+    restart: on-failure
+    volumes:
+      - type: bind
+        source: ..
+        target: /home/developer/workspace
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+      # links:
+      #   - "redis:redis"
+      #quando esse comando acabar o container fecha
+    command: /bin/sh -c "while sleep 1000; do :; done"
