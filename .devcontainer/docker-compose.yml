@@ -1,11 +1,8 @@
 version: "3.5"
 services:
   dev_neocortex:
-    # environment:
-    #   - JWT_SECRET_KEY=${JWT_SECRET_KEY}
-    # ports:
-    #   - '${SERVER_PORT}:${SERVER_PORT}'
-    #   - '1000:1000'
+    environment:
+      - DATABASE_URL=mongodb://127.0.0.1:27017,127.0.0.1:27018,127.0.0.1:27019/dev_miner?replicaSet=rs0&readPreference=primary&ssl=false
     privileged: true
     user: developer
     container_name: neocortex_dev_container
@@ -21,16 +18,16 @@ services:
       - type: bind
         source: /var/run/docker.sock
         target: /var/run/docker.sock
-    links:
-      - "dev_mongodb"
-      #quando esse comando acabar o container fecha
+    network_mode: host #quando esse comando acabar o container fecha
     command: /bin/sh -c "while sleep 1000; do :; done"
   dev_mongodb:
     container_name: "dev_mongodb_container"
-    image: mongo:5.0.6
+    image: candis/mongo-replica-set:0.0.2
     restart: "always"
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: root
     ports:
-      - "127.0.0.1:27017:27017"
+      - 27017:27017
+      - 27018:27018
+      - 27019:27019
+    # command: /bin/sh -c "cp /etc/mongodb.key /etc/mongodb2.key && chmod 600 /etc/mongodb2.key && mongod --config /etc/mongod.conf"
+
+
