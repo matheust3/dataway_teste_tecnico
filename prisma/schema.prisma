@@ -1,0 +1,19 @@
+datasource db {
+    url      = env("DATABASE_URL")
+    provider = "mongodb"
+}
+
+generator client {
+    provider        = "prisma-client-js"
+    previewFeatures = ["mongoDb"]
+
+}
+
+model ProjetosLei {
+    id       String @id @map("_id")
+    titulo   String
+    situacao String
+    assunto  String
+    autor    String
+    ementa   String
+}
