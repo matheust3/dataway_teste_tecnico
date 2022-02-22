@@ -21,7 +21,16 @@ services:
       - type: bind
         source: /var/run/docker.sock
         target: /var/run/docker.sock
-      # links:
-      #   - "redis:redis"
+    links:
+      - "dev_mongodb"
       #quando esse comando acabar o container fecha
     command: /bin/sh -c "while sleep 1000; do :; done"
+  dev_mongodb:
+    container_name: "dev_mongodb_container"
+    image: mongo:5.0.6
+    restart: "always"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+    ports:
+      - "127.0.0.1:27017:27017"
