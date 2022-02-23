@@ -17,7 +17,7 @@
                                  /* Specify what JSX code is generated. */
     "importsNotUsedAsValues": "error",
        /* Modules */
-    "module": "es2020", /* Specify what module code is generated. */
+    "module": "commonjs", /* Specify what module code is generated. */
     "rootDir": "src", /* Specify the root folder within your source files. */
     "moduleResolution": "node",
     "resolveJsonModule": true, /* Enable importing .json files */
