@@ -1,20 +1,68 @@
 import { mock, MockProxy } from 'jest-mock-extended'
 import type { CardData } from '../../domain/models/CardData'
+import type { DraftLaw } from '../../domain/models/DraftLaw'
 import type { ICardsDatasource } from '../datasource/ICardsDatasource'
+import type { IDraftLawDatasource } from '../datasource/IDraftLawDatasource'
 import { PagesRepository } from './PagesRepository'
 
 interface SutTypes{
   repository: PagesRepository
   cardsDatasource: MockProxy<ICardsDatasource> & ICardsDatasource
+  draftLawDatasource: MockProxy<IDraftLawDatasource> & IDraftLawDatasource
 }
 
 const makeSut = (): SutTypes => {
   const cardsDatasource = mock<ICardsDatasource>()
+  const draftLawDatasource = mock<IDraftLawDatasource>()
 
-  const repository = new PagesRepository(cardsDatasource)
+  const repository = new PagesRepository(cardsDatasource, draftLawDatasource)
 
-  return { cardsDatasource, repository }
+  return { cardsDatasource, repository, draftLawDatasource }
 }
+
+describe('PagesRepository.spec.ts - getDraftLawDataFromCard', () => {
+  let repository: PagesRepository
+  let draftLawDatasource: MockProxy<IDraftLawDatasource> & IDraftLawDatasource
+  let card: CardData
+  let draftLawData: DraftLaw
+
+  beforeEach(() => {
+    const sut = makeSut()
+
+    repository = sut.repository
+    draftLawDatasource = sut.draftLawDatasource
+
+    draftLawData = { author: 'author', date: new Date(), ementa: 'ementa', status: 'status', subject: 'subject', title: 'title', url: 'url' }
+    card = { date: new Date(), ementa: 'ementa', moreInfoUrl: 'moreInfoUrl', title: 'title' }
+
+    draftLawDatasource.getDraftLawDataFromCard.mockResolvedValue(draftLawData)
+  })
+
+  test('ensure call datasource with correct params', async () => {
+    //! Arrange
+    //! Act
+    await repository.getDraftLawDataFromCard(card)
+    //! Assert
+    expect(draftLawDatasource.getDraftLawDataFromCard).toHaveBeenCalledWith(card)
+  })
+
+  test('ensure return datasource response', async () => {
+    //! Arrange
+    //! Act
+    const result = await repository.getDraftLawDataFromCard(card)
+    //! Assert
+    expect(result).toBe(draftLawData)
+  })
+
+  test('ensure throws if datasource throws', async () => {
+    //! Arrange
+    const error = Error('any error for test')
+    draftLawDatasource.getDraftLawDataFromCard.mockRejectedValue(error)
+    //! Act
+    //! Assert
+    await expect(repository.getDraftLawDataFromCard(card)).rejects.toThrowError(error)
+  })
+})
 
 describe('PagesRepository.spec.ts - getCardsDataFromCardsPageUrl', () => {
   let repository: PagesRepository
