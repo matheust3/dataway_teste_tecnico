@@ -19,6 +19,6 @@ export class PagesRepository implements IPagesRepository {
   }
 
   async persistDraftLawData (data: DraftLaw): Promise<void> {
-    throw Error('unimplemented')
+    await this._draftLawDatasource.persist(data)
   }
 }

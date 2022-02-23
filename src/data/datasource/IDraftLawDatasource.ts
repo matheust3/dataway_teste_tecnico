@@ -8,4 +8,10 @@ export interface IDraftLawDatasource{
      * @returns Retorna {@link DraftLaw | DraftLaw}
      */
   getDraftLawDataFromCard: (card: CardData) => Promise<DraftLaw>
+
+  /**
+   * Salva os dados de um projeto de lei no banco de dados
+   * @param {(DraftLaw)} draftLaw Projeto de lei
+   */
+  persist: (draftLaw: DraftLaw) => Promise<void>
 }

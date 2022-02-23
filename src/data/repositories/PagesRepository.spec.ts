@@ -20,6 +20,38 @@ const makeSut = (): SutTypes => {
   return { cardsDatasource, repository, draftLawDatasource }
 }
 
+describe('PagesRepository.spec.ts - persistDraftLawData', () => {
+  let repository: PagesRepository
+  let draftLawDatasource: MockProxy<IDraftLawDatasource> & IDraftLawDatasource
+  let draftLawData: DraftLaw
+
+  beforeEach(() => {
+    const sut = makeSut()
+
+    repository = sut.repository
+    draftLawDatasource = sut.draftLawDatasource
+
+    draftLawData = { author: 'author', date: new Date(), ementa: 'ementa', status: 'status', subject: 'subject', title: 'title', url: 'url' }
+  })
+
+  test('ensure call datasource with correct params', async () => {
+    //! Arrange
+    //! Act
+    await repository.persistDraftLawData(draftLawData)
+    //! Assert
+    expect(draftLawDatasource.persist).toHaveBeenCalledWith(draftLawData)
+  })
+
+  test('ensure throws if datasource throws', async () => {
+    //! Arrange
+    const error = Error('any error for test')
+    draftLawDatasource.persist.mockRejectedValue(error)
+    //! Act
+    //! Assert
+    await expect(repository.persistDraftLawData(draftLawData)).rejects.toThrowError(error)
+  })
+})
+
 describe('PagesRepository.spec.ts - getDraftLawDataFromCard', () => {
   let repository: PagesRepository
   let draftLawDatasource: MockProxy<IDraftLawDatasource> & IDraftLawDatasource
