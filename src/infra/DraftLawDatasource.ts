@@ -1,10 +1,14 @@
+import type { PrismaClient } from '@prisma/client'
 import type { Browser } from 'puppeteer'
 import type { IDraftLawDatasource } from '../data/datasource/IDraftLawDatasource'
 import type { CardData } from '../domain/models/CardData'
 import type { DraftLaw } from '../domain/models/DraftLaw'
 
 export class DraftLawDatasource implements IDraftLawDatasource {
-  constructor (private readonly _browser: Browser) {}
+  constructor (
+    private readonly _browser: Browser,
+    private readonly _prismaClient: PrismaClient
+  ) {}
 
   async getDraftLawDataFromCard (card: CardData): Promise<DraftLaw> {
     const page = await this._browser.newPage()
@@ -49,6 +53,25 @@ export class DraftLawDatasource implements IDraftLawDatasource {
   }
 
   async persist (draftLaw: DraftLaw): Promise<void> {
-    throw Error('Not implemented')
+    await this._prismaClient.projetosLei.upsert({
+      create: {
+        assunto: draftLaw.subject,
+        autor: draftLaw.author,
+        ementa: draftLaw.ementa,
+        id: draftLaw.title,
+        situacao: draftLaw.status,
+        titulo: draftLaw.title
+      },
+      update: {
+        assunto: draftLaw.subject,
+        autor: draftLaw.author,
+        ementa: draftLaw.ementa,
+        situacao: draftLaw.status,
+        titulo: draftLaw.title
+      },
+      where: {
+        id: draftLaw.title
+      }
+    })
   }
 }

@@ -1,4 +1,5 @@
-import { mock, MockProxy } from 'jest-mock-extended'
+import type { PrismaClient } from '@prisma/client'
+import { DeepMockProxy, mock, mockDeep, MockProxy } from 'jest-mock-extended'
 import type { Browser, ElementHandle, Page } from 'puppeteer'
 import type { IDraftLawDatasource } from '../data/datasource/IDraftLawDatasource'
 import type { CardData } from '../domain/models/CardData'
@@ -8,15 +9,60 @@ import { DraftLawDatasource } from './DraftLawDatasource'
 interface SutTypes{
   datasource: IDraftLawDatasource
   browser: MockProxy<Browser> & Browser
+  prisma: DeepMockProxy<PrismaClient> & PrismaClient
 }
 
 const makeSut = (): SutTypes => {
   const browser = mock<Browser>()
+  const prisma = mockDeep<PrismaClient>()
 
-  const datasource = new DraftLawDatasource(browser)
+  const datasource = new DraftLawDatasource(browser, prisma)
 
-  return { browser, datasource }
+  return { browser, datasource, prisma }
 }
+
+describe('DraftLawDatasource.spec.ts - persist', () => {
+  let prisma: MockProxy<PrismaClient> & PrismaClient
+  let datasource: IDraftLawDatasource
+  let draftLaw: DraftLaw
+
+  beforeEach(() => {
+    const sut = makeSut()
+
+    prisma = sut.prisma
+    datasource = sut.datasource
+
+    draftLaw = { author: 'author', date: new Date(), ementa: 'ementa', status: 'status', subject: 'subject', title: 'title', url: 'url' }
+  })
+
+  test('ensure call prisma client with correct params', async () => {
+    //! Arrange
+    //! Act
+    await datasource.persist(draftLaw)
+    //! Assert
+    expect(prisma.projetosLei.upsert).toHaveBeenCalledWith({
+      create: {
+        assunto: draftLaw.subject,
+        autor: draftLaw.author,
+        ementa: draftLaw.ementa,
+        id: draftLaw.title,
+        situacao: draftLaw.status,
+        titulo: draftLaw.title
+      },
+      update: {
+        assunto: draftLaw.subject,
+        autor: draftLaw.author,
+        ementa: draftLaw.ementa,
+        situacao: draftLaw.status,
+        titulo: draftLaw.title
+      },
+      where: {
+        id: draftLaw.title
+      }
+    }
+    )
+  })
+})
 
 describe('DraftLawDatasource.spec.ts - getDraftLawDataFromCard', () => {
   let datasource: IDraftLawDatasource
