@@ -18,5 +18,5 @@
         "Prisma.prisma"
     ],
     "workspaceFolder": "/home/developer/workspace",
-    "postStartCommand": "npm install -g npm && npm i && npx husky install"
+    "postStartCommand": "npm install -g npm && npm i && npx husky install && npx prisma generate && npx prisma db push"
 }
